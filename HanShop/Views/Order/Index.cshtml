@@ -1,0 +1,131 @@
+﻿@* staff/admin can see all orders in the system *@
+@model IEnumerable<HanShop.Models.Order>
+@* this page is for ADMIN to manage user orders   *@
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2 class="text-center">Orders Management</h2>
+
+
+
+@* add a search bar to search a certain order *@
+<div class="container">
+    <div class="row" style="margin:20px 0;">
+        <div class="text-center">
+            @* if the user type in keyword to search for a certain user, when clicks the submit button, the page will go to UserController-> Index method
+                to check if the the user name or nickname contains any of the keywords*@
+            <form action="" method="get">
+                Please enter your order number: <input type="text" class="form-control" style="display:inline-block; width:200px;" name="keyword"  value="@(Request.QueryString["keyword"] != null? Request.QueryString["keyword"]: "")" />
+                <input type="submit" name="submit" value="Search" class="btn btn-outline-primary" />
+            </form>
+        </div>
+    </div>
+</div>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.User.Username)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.OrderNumber)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.SumPrice)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Notes)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CreatingTime)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.IsPaid)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.OrderState)
+        </th>
+        <th>Action</th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.User.Username)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.OrderNumber)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SumPrice)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Notes)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreatingTime)
+            </td>
+            <td>
+                @if (item.IsPaid)
+                {
+                    <span class="btn btn-success">Paid</span>
+                }
+                else
+                {
+                    <span class="btn btn-warning">Not Paid</span>
+                }
+            </td>
+            <td>
+                @if (item.OrderState == 0)
+                {
+                    <span>Preparing</span>
+                }
+                else if (item.OrderState == 1)
+                {
+                    <span>On Delivery</span>
+                }
+                else if (item.OrderState == 2)
+                {
+                    <span>Deliverd</span>
+                }
+                else
+                {
+                    <span>Finished</span>
+                }
+
+            </td>
+            <td>
+
+                <a href="/Order/Details?id=@item.Id" class="btn btn-outline-primary">Details</a>
+
+            </td>
+        </tr>
+    }
+
+</table>
+
+
+
+@* pagination *@
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <nav aria-label="Page ">
+                <ul class="pagination justify-content-center pagination-lg">
+                    @if (ViewBag.pageNum == null || ViewBag.pageNum == 0)
+                    {
+                        <li class="page-item active" aria-current="page"><span class="page-link">1</span></li>
+                    }
+                    @for (var i = 1; i <= ViewBag.pageNum; i++)
+                    {
+                        <li class="page-item @((i == ViewBag.currentPage) ? "active" : "")">
+                            <a class="page-link" href="?page=@i&CategoryId=@(Request.QueryString["CategoryId"] != null ? int.Parse(Request.QueryString["CategoryId"].ToString()) : 0)&keyword=@(Request.QueryString["keyword"] != null ? Request.QueryString["keyword"] : "")">@i</a>
+                        </li>
+                    }
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>

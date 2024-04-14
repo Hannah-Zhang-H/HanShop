@@ -1,0 +1,100 @@
+﻿@* this page is for admin/staff to see all users in the system *@
+@model IEnumerable<HanShop.Models.User>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2 class="text-center">User Management</h2>
+
+<p>
+    @*@Html.ActionLink("Create New", "Create")*@
+    <a href="/User/Create" class="btn btn-success">Add User</a>
+</p>
+
+@* add a search bar to search a certain person *@
+<div class="container">
+    <div class="row" style="margin:20px 0;">
+        <div class="text-center">
+            @* if the user type in keyword to search for a certain user, when clicks the submit button, the page will go to UserController-> Index method
+                to check if the the user name or nickname contains any of the keywords*@
+            <form action="/User/Index" method="get">
+                Search a User: <input type="text" class="form-control" style="display:inline-block; width:200px;" name="keyword" placeholder="Please enter a key word" value="@(Request.QueryString["keyword"] != null? Request.QueryString["keyword"]: " ")" />
+                <input type="submit" name="submit" value="Search" class="btn btn-outline-primary" />
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+<table class="table">
+    <tr>
+        <th>
+            User Name
+        </th>
+        <th>
+            Nickname
+        </th>
+        <th>
+            Gender
+        </th>
+
+        <th class="text-center">
+            Action
+        </th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Username)
+            </td>
+
+            <td>
+                @Html.DisplayFor(modelItem => item.Nickname)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Gender)
+            </td>
+
+            <td class="text-center">
+
+                <a href="/User/Edit?id=@item.Id" class="btn btn-warning">Edit</a>
+                <a href="/User/Details?id=@item.Id" class="btn btn-primary">Details</a>
+                <a href="/User/Delete?id=@item.Id" class="btn btn-danger" onclick="return confirm('Are your sure to delete this item?')">Delete</a>
+
+            </td>
+        </tr>
+    }
+
+</table>
+
+
+
+@* pagination *@
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <nav aria-label="Page ">
+                <ul class="pagination justify-content-center pagination-lg">
+                    @if (ViewBag.pageNum == null || ViewBag.pageNum == 0)
+                    {
+                        <li class="page-item active" aria-current="page"><span class="page-link">1</span></li>
+                    }
+                    @for (var i = 1; i <= ViewBag.pageNum; i++)
+                    {
+                        <li class="page-item @((i == ViewBag.currentPage) ? "active" : "")">
+                            <a class="page-link" href="?page=@i&CategoryId=@(Request.QueryString["CategoryId"] != null ? int.Parse(Request.QueryString["CategoryId"].ToString()) : 0)&keyword=@(Request.QueryString["keyword"] != null ? Request.QueryString["keyword"] : "")">@i</a>
+                        </li>
+                    }
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>

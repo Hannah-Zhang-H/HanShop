@@ -1,0 +1,144 @@
+﻿/*the navbar is flex, it would move as the mouse scroll down, incase it would hide any content of the website, need to place a gap before the body.*/
+body::before {
+    display: block;
+    content: "";
+    height: 88px;
+}
+
+
+
+/*any links in the webpage*/
+a {
+    text-decoration: none;
+    color: black;
+    transition: all 0.5s;
+}
+
+
+/*set the transition to the category display part on "/Home/Index"*/
+.card {
+    transition: all 0.5s;
+}
+
+
+    .card:hover {
+        border-radius: 75px;
+        background-color: #ef256c;
+    }
+
+
+        .card:hover .card-body a {
+            color: white;
+        }
+
+
+/*these are the settings to the recommended products on the "/Home/Index"*/
+.recommendA {
+    transition: all 0.2s;
+}
+
+
+
+
+    .recommendA:hover {
+        box-shadow: 10px 20px 15px 5px #78c2ad;
+    }
+
+
+
+
+.products {
+    display: inline-block;
+}
+
+
+.searchPadding {
+    padding-left: 300px;
+}
+
+
+.CategoryText {
+    font-size: larger;
+    font-weight: 900;
+    text-align: center;
+    line-height: 300px;
+}
+
+
+.CategoryA {
+    display: inline-block;
+}
+
+
+
+
+/* font for productList and recommendedList */
+.prText {
+    text-align: center;
+    font-size: 20px;
+    line-height: 30px;
+}
+
+
+
+
+.prPrice {
+    text-align: center;
+    font-size: 22px;
+    line-height: 30px;
+    font-weight: 500;
+}
+
+
+.carouselText {
+    font-size: 30px;
+    font-weight: 600;
+}
+
+/*at homepage sign up part, change the button text color*/
+#homeSignupBtn:hover {
+    color: #eb1769;
+}
+
+
+
+
+
+/*staff log in backgournd setting*/
+.staffloginBG {
+    /* set background URL */
+    background-image: url("Resources/otherImgs/staffLogin.jpg");
+    /* setting the background */
+    background-repeat: no-repeat;
+    background-size: cover; /* change the size */
+    background-position: center; /* change the backgrond position */
+    background-attachment: fixed; 
+}
+
+
+
+/*magnifier setting*/
+.container .row #magnifier {
+    display: none;
+    height: 480px;
+    width: 480px;
+    background-size: 860px 860px; /* Magnify twice  */
+    background-repeat: no-repeat; 
+    position: absolute;
+    left: 1100px;
+    top: 280px;
+    z-index: 999;
+    background-color: #fff;
+}
+/*mask appears if mouse enter a product image at the sitepage "/Home/Detail"*/
+#mask {
+    position: absolute;
+    display: none;
+    width: 240px;
+    height: 240px;
+    background-color: rgba(0,0,0,0.3);
+    position: absolute;
+    left: 0;
+    top: 0;
+    cursor: move;
+}

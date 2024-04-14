@@ -1,0 +1,23 @@
+﻿@* this page is for welcoming the Admin/staff to login at staff centre *@
+@{
+    ViewBag.Title = "Index";
+    //Layout = null;
+}
+
+
+<div class="alert alert-dismissible alert-primary p-5">
+    <button type="button" class="btn-close" data-bs-dismiss="alert" fdprocessedid="20a90v"></button>
+    <h4 class="alert-heading">Reminder!</h4>
+    <p class="mb-0">To <strong>Sign out</strong>, please click the icon on the right side of the navbar. </p>
+</div>
+
+
+<h2 class="p-5">Welcome to Staff Centre, dear <strong> @(Session["currentAdminName"] != null? Session["currentAdminName"].ToString():"").</strong></h2>
+<br />
+
+<p class="p-2">Log in time: @DateTime.Now.</p>
+
+
+
+
+<div style="height:600px"></div>

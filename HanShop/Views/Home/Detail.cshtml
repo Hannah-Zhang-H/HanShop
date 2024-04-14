@@ -1,0 +1,265 @@
+﻿@* for the user clicks a certain product,
+    will display: product img and other information + add review + review display *@
+@model HanShop.Models.Product
+@{
+    Layout = "~/Views/Shared/_HomeLayout.cshtml";
+}
+
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+<link href="~/Content/myStyle.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+<body>
+    @* breadcrumb *@
+    <nav aria-label="breadcrumb" class="p-5">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/Home/Index">Home</a></li>
+            <li class="breadcrumb-item"><a href="/Home/List?CategoryId=@Model.CategoryID">@Model.Category.Name</a></li>
+            <li class="breadcrumb-item active" aria-current="page">@Model.Name</li>
+        </ol>
+    </nav>
+
+
+    <div class="container">
+        <div class="row">
+
+            <div class="col-12">
+                <h1 class="text-center">@Model.Name</h1>
+            </div>
+            <div class="col-6 " style="position:relative;" id="magnifierImg">
+                <img src="@Model.Img" alt="@Model.Name" class=" w-75" />
+
+                @* mask will be displayed while the mouse enters into the product img *@
+                <div id="mask"></div>
+            </div>
+            @* magnifier will display if mouse enters the priduct img *@
+            <div class="col-6" id="magnifier" style="background-image:url(@Model.Img); border:3px solid gray;"></div>
+
+            <div class="col-6 p-5">
+
+                <p>Category: @Model.Category.Name</p>
+                <p class="text-warning" style="font-size:40px;">Sale Price: $@Model.SalePrice</p>
+                <p><del>Price: $ @Model.Price</del></p>
+                <p>Product Code: @Model.ProductCode</p>
+                <p>Storage: @Model.storage</p>
+                <span>Numbers </span> &nbsp;&nbsp;
+                <input type="number" name="number" value="1" class="btn btn-outline-success btn-lg" style="width:100px;" min="1" max="@Model.storage" id="number" /> &nbsp;&nbsp;
+
+                <button class="btn btn-success btn-lg" type="button" id="cart">Add to Cart</button>
+            </div>
+        </div>
+
+
+        @* product description *@
+        <hr />
+        <div class="row p-5">
+            <div class="col">
+                <h2 class="text-center">Product Description</h2>
+                <p>@Model.Description</p>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    @* review part *@
+    <hr />
+    <div class="container">
+        <div class="row p-5">
+
+            <div class="col">
+                <h2 class="text-center">Add a Review </h2>
+
+                @* check whether user has logged in or not, if logged in, then display the review list and an areatext, other wise just a reminder *@
+                @if (Session["uerId"] != null)
+                {
+                    // if the user hasn't bought the product
+                    // this ViewBag.hasBought is created in the "Detail" method in "Home" controller.
+                    if (ViewBag.hasBought != null)
+                    {
+                        <div class="alert alert-dismissible alert-success">
+                            Wellcome! Now you can add a review.
+                        </div>
+                        <div class="form-group">
+                            <label for="textarea" class="form-label " xt-marked="ok">Add my review here:</label>
+                            <textarea class="form-control" id="textarea" rows="3" style="border:2px solid green;"></textarea>  <br />
+                            <button class="btn btn-outline-success" id="textAreaBtn" onclick="textAreaBtnSubmit()">Submit Review</button>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-dismissible alert-warning">
+                            You haven't purchased this product, please buy the product to add a review.
+                        </div>
+                    }
+                }
+                else
+                {
+                    //if the user is not logged in, if user clicks the "log in", then will jump to user login page to log in
+                    <div class="alert alert-dismissible alert-danger">
+                        Dear customer, please  <a href="/Home/Login" class="alert-link"><strong>sign in</strong></a> to add a review.
+                    </div>
+                }
+
+            </div>
+        </div>
+    </div>
+
+
+    <hr />
+
+
+    @* review display: if there is any *@
+    <div class="container p-5">
+        <div class="row">
+            <div class="col">
+                <h2 class="text-center">Product Review Display</h2>
+                <table class="text-center  table table-success ">
+                    <tr>
+                        <th>User</th>
+                        <th>Content</th>
+                        <th>Date</th>
+                    </tr>
+
+                    @* ViewBag.review is created in "Home/detail" *@
+                    @* if viewbag.review is not null, which means this product has some reviews, then dispaly them, otherwise do not to dispaly anything. *@
+                    @if (ViewBag.review != null)
+                    {
+                        foreach (var item in ViewBag.review)
+                        {
+                            <tr>
+                                <td>
+                                    @item.User.Username
+                                </td>
+                                <td>
+                                    @item.ReviewContent
+                                </td>
+                                <td>
+                                    @item.CreatingTime
+                                </td>
+                            </tr>
+                        }
+                    }
+
+
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <script src="~/Scripts/myScript/myScripts.js"></script>
+
+
+    @* if user clicks the cart, check if user has signed in or not, if not, the page will jump to user login page *@
+    <script>
+
+        $("#cart").click(function () {
+            var isLogin = " @(Session["uerId"] != null ? Session["uerId"] : 0 )";
+            if (isLogin == 0) {
+                alert("Please log in first!");
+                //window.location.href = "/Home/Login";
+                return;
+            }
+
+            // if the user has already logged in
+            $.ajax({
+                url: "/Home/AddToCart",
+                type: "post",
+                data: {
+                    productId: "@Model.ID",
+                    productNum: $("#number").val(),
+                },
+
+                success: function (res) {
+                    if (res == 200) {
+                        alert("Adding to cart successfully!");
+                    }
+                    else {
+                        alert("Adding to cart failed.")
+                    }
+                },
+
+                error: function (res) {
+
+                    alert("Requesting failed, adding item failed.")
+                }
+
+            })
+
+
+            //reload the page-> if there are some products in the cart,
+            //the user can see the product number on top of the cart
+            location.reload();
+        })
+
+
+
+
+        // submit review
+        function textAreaBtnSubmit() {
+            var textarea = $("#textarea").val();
+            // if user does not enter anything
+            if (textarea.trim().length < 1) {
+                alert("please enter your review.")
+                return;
+            }
+
+
+
+            // add review through ajax
+            $.ajax({
+                url: "/Review/Create",
+                type: "post",
+                data: {
+                    UserId : @(Session["uerId"] != null ? Session["uerId"] : 0 ),
+                    ProductId : @Model.ID,
+                    CreatingTime : "@DateTime.Now" ,
+                    ReviewContent : textarea
+                },
+
+                success: function (res) {
+                    if (res == "200") {
+                        alert("You have added a review.");
+                        window.location.reload();
+                    }
+                    else {
+                        alert("Adding review failed.")
+                    }
+                },
+
+                error: function (res) {
+                    alert("Requesting failed, adding review failed.")
+                }
+            })
+        }
+
+    </script>
+
+
+
+</body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

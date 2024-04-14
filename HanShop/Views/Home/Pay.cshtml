@@ -1,0 +1,173 @@
+﻿@* if user logs in -> add products into the cart -> clicks the cart -> clicks the "go to pay" button -> then this page will show up  *@
+@* this page displays the order contents, the user address, payment method, if user clicks "pay" button, 
+    then will notice the user the payment has successfully finished. will go to the user personal centre.  *@
+
+@{
+    ViewBag.Title = "Pay";
+    Layout = "~/Views/Shared/_HomeLayout.cshtml";
+}
+
+@* breadcrumb *@
+<nav aria-label="breadcrumb " class="p-5">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/Home/Index">Home</a></li>
+        <li class="breadcrumb-item"><a href="/Home/Cart">My Cart</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Pay</li>
+    </ol>
+</nav>
+
+
+<h1 class="text-center">My Order</h1>
+
+<div class="container p-5">
+    <div class="row">
+        <div class="col">
+            <div>
+                <table class="table text-center">
+                    <tr style="font-size:larger; font-weight:600;">
+                        <td>Product</td>
+                        <td>Product Name</td>
+                        <td>Price</td>
+                        <td>Purchase Number</td>
+                        <td>Total</td>
+                    </tr>
+
+                    @{
+
+                        decimal sumPrice = 0;
+
+                    }
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            @* add this link here, so user can just click the picture to jump to the certain product detail *@
+                            <td><a href="/Home/Detail?id=@item.ProductId"><img src="@item.Product.Img" alt="@item.Product.Name" class="w-50" /></a> </td>
+                            <td>@item.Product.Name</td>
+                            <td>$@item.Product.SalePrice</td>
+                            <td>@item.ProductNum</td>
+                            <td>$@(item.Product.SalePrice * item.ProductNum)</td>
+                          
+                        </tr>
+
+
+                        { sumPrice += Convert.ToDecimal(item.Product.SalePrice * item.ProductNum); }
+                    }
+                    <tr>
+                        <td colspan="4"></td>
+                        <td>Total to Pay: <strong>$@sumPrice</strong></td>
+                        <td></td>
+                    </tr>
+
+                </table>
+                <h3 class="p-5">My Address</h3>
+                <table class="table text-lg-start">
+
+                    @* ViewBag.address -> check HomeController -> Pay method *@
+                    @for (int i = 0; i < ViewBag.address.Count; i++)
+                    {
+                        <tr>
+                            <th>
+                                <input type="radio" name="address" checked value="@ViewBag.address[i].Id" id="radioAddress@(ViewBag.address[i].Id)" />
+                                <label for="radioAddress@(ViewBag.address[i].Id)">
+                                    @ViewBag.address[i].ReceivingName - @ViewBag.address[i].Phone
+                                    - @ViewBag.address[i].Address
+                                </label>
+
+                            </th>
+
+                        </tr>
+                    }
+                </table>
+
+                <div class="container">
+                    <div class="row">
+                        <div class="col-9"></div>
+                        <div class="col-3">
+                            <a href="/UserAddress/Index" target="_blank" class="btn btn-outline-primary">Manage My Address</a>
+                        </div>
+                    </div>
+                </div>
+
+                @if (ViewBag.address.Count == 0)
+                {
+                    <p>Please add an address first. <a href="/UserAddress/Index" target="_blank">Manage My Address</a> </p>
+                }
+
+
+                <h3 class="p-5">Pay by</h3>
+                <table class="table ">
+                    <tr>
+                        <td>
+                            <input type="radio" name="paymentMethod" checked value="Bank Card" id="payby1" />
+                            <label for="payby1"> Bank Card</label>
+                        </td>
+                        <td>
+                            <input type="radio" name="paymentMethod"  value="Pear Pay" id="payby2" />
+                            <label for="payby2"> Pear Pay</label>
+                        </td>
+                        <td>
+                            <input type="radio" name="paymentMethod"  value="Cash on Delivery" id="payby3" />
+                            <label for="payby3"> Cash on Delivery</label>
+                        </td>
+                    </tr>
+                </table>
+
+                <h3 class="p-5">Order Notes</h3>
+                <textarea style="width:100%; height:60px;" placeholder="[Optional]Please enter your notes here..." id="notes"></textarea>
+
+
+
+                <div class="container p-2 ">
+                    <div class="row">
+                        <div class="col-10"></div>
+                        <div class="col-2">
+                            <button class="btn btn-warning btn-lg" id="buy" onclick="buy()">Confirm</button>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+<hr />
+
+
+<script>
+    function buy() {
+        // use jQuery selsctor $() to select all "<input>" elements named "address", to check if any of the address is selected
+        if ($("input[name = 'address']:checked").length == 0) {
+            alert("Please add your address first, thank you.");
+            return;
+        }
+        if (confirm("Have you paid the order?")) {
+           
+            $.ajax({
+                url: "/Home/Pay",
+                type: "post",
+                data: {
+                    addressId: $("input[name = 'address']:checked").val(),
+                    paymentMethod: $("input[name = 'paymentMethod']:checked").val(),
+                    notes:$("#notes").val()
+                },
+                success: function (res) {
+                    if (res == "200") {
+                        alert("You have paid successfully, will jump to your order management centre.")
+                        window.location.href = "/Order/Index2" // will jump to user order management centre
+                    }
+                    else {
+                        alert("Payment failed.")
+                    }
+                },
+
+                error: function (res) {
+                    alert("Request failed, Payment failed")
+                }
+            })
+        }
+        else {
+            alert("Please pay the order.");
+        }
+    }
+</script>

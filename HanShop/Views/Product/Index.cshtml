@@ -1,0 +1,125 @@
+﻿@* for staff/admin to see the products lists *@
+@model IEnumerable<HanShop.Models.Product>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2 class="text-center">Products Management</h2>
+
+<p>
+    <a href="/Product/Create" class="btn btn-success">Add Products</a>
+</p>
+
+@* add a search bar to search a certain product *@
+<div class="container">
+    <div class="row" style="margin:20px 0;">
+        <div class="text-center">
+            @* if the user type in keyword to search for a certain user, when clicks the submit button, the page will go to UserController-> Index method
+                to check if the the user name or nickname contains any of the keywords*@
+            <form action="" method="get">
+                Search a Product: <input type="text" class="form-control" style="display:inline-block; width:200px;" name="keyword" placeholder="Please enter a key word" value="@(Request.QueryString["keyword"] != null? Request.QueryString["keyword"]: "")" />
+                <input type="submit" name="submit" value="Search" class="btn btn-outline-primary" />
+            </form>
+        </div>
+    </div>
+</div>
+<table class="table">
+    <tr>
+        <th>
+            $@Html.DisplayNameFor(model => model.Category.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Price)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.SalePrice)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.storage)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Description)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ProductCode)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Img)
+        </th>
+        <th>Action</th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Category.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Price)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SalePrice)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.storage)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ProductCode)
+            </td>
+            <td>
+                @*@Html.DisplayFor(modelItem => item.Img)*@
+                @* if image exits, then set a default image *@
+                @if (!String.IsNullOrEmpty(item.Img))
+                {
+                    <img src="@Html.DisplayFor(modelItem=>item.Img)" width="100" height="100" alt="productImg" />
+                }
+                else
+                {
+                    <img src="~/Content/Resources/Images/defaultProductImg.png" width="100" height="100" alt="defaultProductImg" />
+                }
+            </td>
+            <td>
+                <a href="/Product/Edit?id=@item.ID" class="btn btn-warning">Edit</a>
+                <a href="/Product/Details?id=@item.ID" class="btn btn-primary">Details</a>
+                <a href="/Product/Delete?id=@item.ID" class="btn btn-danger" onclick="return confirm('Are your sure to delete this item?')">Delete</a>
+
+            </td>
+        </tr>
+    }
+
+</table>
+
+
+
+@* pagination *@
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <nav aria-label="Page ">
+                <ul class="pagination justify-content-center pagination-lg">
+                    @if (ViewBag.pageNum == null || ViewBag.pageNum == 0)
+                    {
+                        <li class="page-item active" aria-current="page"><span class="page-link">1</span></li>
+                    }
+                    @for (var i = 1; i <= ViewBag.pageNum; i++)
+                    {
+                        <li class="page-item @((i == ViewBag.currentPage) ? "active" : "")">
+                            <a class="page-link" href="?page=@i&CategoryId=@(Request.QueryString["CategoryId"] != null ? int.Parse(Request.QueryString["CategoryId"].ToString()) : 0)&keyword=@(Request.QueryString["keyword"] != null ? Request.QueryString["keyword"] : "")">@i</a>
+                        </li>
+                    }
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>

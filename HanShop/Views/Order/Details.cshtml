@@ -1,0 +1,135 @@
+﻿@* STAFF/ADMIN can see his/her order details by clicking "detail" button  *@
+@model IEnumerable<HanShop.Models.OrderDetail>
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2> Order Details</h2>
+
+<div>
+    <hr />
+    <dl class="dl-horizontal">
+
+        <dt>
+            Order Number
+        </dt>
+
+        <dd>
+            @ViewBag.order.OrderNumber
+        </dd>
+
+        <dt>
+            Sum Price
+        </dt>
+
+        <dd>
+            $@ViewBag.order.SumPrice
+        </dd>
+
+        <dt>
+            Notes
+        </dt>
+
+        <dd>
+            @ViewBag.order.Notes
+        </dd>
+
+        <dt>
+            Creating Time
+        </dt>
+
+        <dd>
+            @ViewBag.order.CreatingTime
+        </dd>
+
+        <dt>
+            IsPaid
+        </dt>
+
+        <dd>
+            @ViewBag.order.IsPaid
+        </dd>
+        <dt>
+            Payment Method
+        </dt>
+        <dd>
+            @ViewBag.order.PaymentMethod
+        </dd>
+        <dt>
+            Order State
+        </dt>
+
+        <dd>
+            @if (ViewBag.order.OrderState == 0)
+            {
+                <span>Preparing</span>
+            }
+            else if (ViewBag.order.OrderState == 1)
+            {
+                <span>On Delivery</span>
+            }
+            else if (ViewBag.order.OrderState == 2)
+            {
+                <span>Deliverd</span>
+            }
+            else
+            {
+                <span>Finished</span>
+            }
+        </dd>
+
+
+
+    </dl>
+</div>
+
+
+<hr />
+
+<h2 class="text-center">Order Details</h2>
+<table>
+    <tr>
+        <th>
+            Product Image
+        </th>
+        <th>
+            Product Name
+        </th>
+        <th>
+            Number
+        </th>
+        <th>
+            Price
+        </th>
+        <th>
+            SumPrice
+        </th>
+    </tr>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                <img src="@item.Product.Img" alt="@item.Product.Name" class="w-25" />
+            </td>
+            <td>
+                @item.Title
+            </td>
+            <td>
+                @item.Count
+            </td>
+            <td>
+                @item.Price
+            </td>
+            <td>
+                @item.SumPrice
+            </td>
+        </tr>
+
+    }
+</table>
+
+<div class="text-center p-3 ">
+    <a href="javascript:void(0)" onclick="window.history.back(-1);" style="display:inline-block" class="btn btn-primary">Back to List</a>
+</div>

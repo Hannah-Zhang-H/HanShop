@@ -1,0 +1,93 @@
+﻿@* this page is for USER to manage user review   *@
+@model IEnumerable<HanShop.Models.Review>
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+<h2 class="text-center"> My Reviews Management</h2>
+
+
+
+@* add a search bar to search a certain review *@
+<div class="container">
+    <div class="row" style="margin:20px 0;">
+        <div class="text-center">
+            @* if the user type in keyword to search for a certain user, when clicks the submit button, the page will go to UserController-> Index method
+                to check if the the user name or nickname contains any of the keywords*@
+            <form action="" method="get">
+                Search a review: <input type="text" class="form-control" style="display:inline-block; width:200px;" name="keyword" placeholder="Enter product name" value="@(Request.QueryString["keyword"] != null ? Request.QueryString["keyword"] : "")" />
+                <input type="submit" name="submit" value="Search" class="btn btn-outline-primary" />
+            </form>
+        </div>
+    </div>
+</div>
+
+<table class="table">
+    <tr>
+        <th>
+            @*@Html.DisplayNameFor(model => model.Product.Name)*@
+            Product Name
+        </th>
+        <th>
+            User Name
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CreatingTime)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ReviewContent)
+        </th>
+        <th>Action</th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Product.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.User.Username)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreatingTime)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ReviewContent)
+            </td>
+            <td>
+                @* only can delete review here *@
+                <a href="/Review/Delete?id=@item.Id" class="btn btn-danger" onclick="return confirm('Are your sure to delete this item?')">Delete</a>
+
+            </td>
+        </tr>
+
+    }
+</table>
+
+
+
+
+@* pagination *@
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <nav aria-label="Page ">
+                <ul class="pagination justify-content-center pagination-lg">
+                    @if (ViewBag.pageNum == null || ViewBag.pageNum == 0)
+                    {
+                        <li class="page-item active" aria-current="page"><span class="page-link">1</span></li>
+                    }
+                    @for (var i = 1; i <= ViewBag.pageNum; i++)
+                    {
+                        <li class="page-item @((i == ViewBag.currentPage) ? "active" : "")">
+                            <a class="page-link" href="?page=@i&CategoryId=@(Request.QueryString["CategoryId"] != null ? int.Parse(Request.QueryString["CategoryId"].ToString()) : 0)&keyword=@(Request.QueryString["keyword"] != null ? Request.QueryString["keyword"] : "")">@i</a>
+                        </li>
+                    }
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>

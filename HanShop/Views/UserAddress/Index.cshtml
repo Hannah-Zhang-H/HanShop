@@ -1,0 +1,115 @@
+﻿@* this page is for user to see his/her address list *@
+@model IEnumerable<HanShop.Models.UserAddress>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+<h2 class="text-center">My Address Management</h2>
+
+<p>
+    <a href="/UserAddress/Create" class="btn btn-success">Add New Address</a>
+</p>
+
+@* add a search bar to search a certain product *@
+<div class="container">
+    <div class="row" style="margin:20px 0;">
+        <div class="text-center">
+            @* if the user type in keyword to search for a certain user, when clicks the submit button, the page will go to UserController-> Index method
+                to check if the the user name or nickname contains any of the keywords*@
+            <form action="" method="get">
+                Search your address: <input type="text" class="form-control" style="display:inline-block; width:200px;" name="keyword" placeholder="Please enter your address" value="@(Request.QueryString["keyword"] != null? Request.QueryString["keyword"]: "")" />
+                <input type="submit" name="submit" value="Search" class="btn btn-outline-primary" />
+            </form>
+        </div>
+    </div>
+</div>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.User.Username)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Address)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ReceivingName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Phone)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Notes)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CreatingTime)
+        </th>
+        <th>Action</th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.User.Username)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Address)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ReceivingName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Phone)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Notes)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreatingTime)
+            </td>
+            <td>
+                <a href="/UserAddress/Edit?id=@item.Id" class="btn btn-warning">Edit</a>
+                <a href="/UserAddress/Delete?id=@item.Id" class="btn btn-danger" onclick="return confirm('Are your sure to delete this item?')">Delete</a>
+            </td>
+        </tr>
+    }
+
+</table>
+
+
+
+@* pagination *@
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <nav aria-label="Page ">
+                <ul class="pagination justify-content-center pagination-lg">
+                    @if (ViewBag.pageNum == null || ViewBag.pageNum == 0)
+                    {
+                        <li class="page-item active" aria-current="page"><span class="page-link">1</span></li>
+                    }
+                    @for (var i = 1; i <= ViewBag.pageNum; i++)
+                    {
+                        <li class="page-item @((i == ViewBag.currentPage) ? "active" : "")">
+                            <a class="page-link" href="?page=@i&CategoryId=@(Request.QueryString["CategoryId"] != null ? int.Parse(Request.QueryString["CategoryId"].ToString()) : 0)&keyword=@(Request.QueryString["keyword"] != null ? Request.QueryString["keyword"] : "")">@i</a>
+                        </li>
+                    }
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+

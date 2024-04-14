@@ -1,0 +1,363 @@
+﻿@* Han'ShoppingCentre Homepage,
+    contains: carousel + display categories + products + sign up + HanShoppingCentre brief introduction + FAQs + contact way*@
+@model IEnumerable<HanShop.Models.Product>
+
+@{
+    Layout = "~/Views/Shared/_HomeLayout.cshtml";
+}
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+<link href="~/Content/myStyle.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+<!-- carousel part -> to display some shopping pictures -->
+<section class="p-5">
+    <div id="myCarousel" class="carousel carousel-dark slide" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="0" class="active"
+                    aria-current="true" aria-label="Slide 1"></button>
+            <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+            <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+        </div>
+        <div class="carousel-inner">
+            <div class="carousel-item active" data-bs-interval="2500">
+                <!-- set time interval: 2.5s -->
+                <a href="#carousel1">
+                    <img src="~/Content/Resources/otherImgs/carouselBG/carouselBG3.jpeg" class="d-block w-50 mx-auto" alt="carouselBG3" />
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5 style="color: white;" class="carouselText">New Arrivals</h5>
+                        <p style="color: white;" class="carouselText">New items, brand-new life style!</p>
+                    </div>
+                </a>
+
+            </div>
+            <div class="carousel-item" data-bs-interval="2500">
+                <!-- set time interval: 2.5s -->
+                <a href="#carousel2">
+                    <img src="~/Content/Resources/otherImgs/carouselBG/carouselBG2.jpeg" class="d-block w-50 mx-auto" alt="carouselBG2" />
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5 style="color: white;" class="carouselText">On Sale</h5>
+                        <p style="color: white;" class="carouselText">20% ~ 70% off! Never miss it!</p>
+                    </div>
+                </a>
+
+            </div>
+            <div class="carousel-item" data-bs-interval="2500">
+                <!-- set time interval: 2.5s -->
+                <a href="#carousel3">
+                    <img src="~/Content/Resources/otherImgs/carouselBG/carouselBG1.jpg" class="d-block w-50 mx-auto" alt="carouselBG1" />
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5 class="carouselText">Free Bags</h5>
+                        <p class="carouselText">We offer eco-friendly shopping bags, enjoy your shopping!</p>
+                    </div>
+                </a>
+
+            </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#myCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#myCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+</section>
+
+
+
+
+
+
+
+@* CategoryDisplay *@
+@{
+    var categoryNum = 0;
+    IEnumerable<IGrouping<string, HanShop.Models.Product>> groupedProducts = Enumerable.Empty<IGrouping<string, HanShop.Models.Product>>();
+    var productsCategoryNotNull = Model.Where(p => p.CategoryID != null).ToList();
+    if (productsCategoryNotNull != null)
+    {
+        groupedProducts = productsCategoryNotNull.GroupBy(p => p.Category.Name); <!-- according to group name -->
+         categoryNum = groupedProducts.Count();
+    }
+}
+
+
+<!-- card to display the categories -->
+<section class="p-5" style="background-color: #78c2ad;" id="carousel1">
+    <h2 class="text-center p-5 text-light"> <strong>Shop by Category, <strong style="color: #ef256c; font-weight: 700; " class="display-4">@categoryNum</strong>  Categories in all!</strong> </h2>
+    <div class="container mt-4">
+
+        <div class="row">
+
+            @foreach (var group in groupedProducts)
+            {
+
+                <div class="col-4 my-4">
+                    @{
+                        var product = group.FirstOrDefault(); <!-- choose the first product in each category-->
+                    }
+                    @if (product != null)
+                    {
+
+                        <div class="card" style="width: 22rem; height: 24rem;">
+                            <!-- dispaly product picture and category information-->
+                            <a href="/Home/List?CategoryId=@product.CategoryID">
+                                <img src="@product.Img" style="width: 100%; height: 270px;">
+                            </a>
+                            <div class="card-body ">
+                                <a href="/Home/List?CategoryId=@product.CategoryID">
+                                    <p class="card-text text-center p-3 " style="font-size:32px; font-weight:700; font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif">@product.Category.Name</p>
+                                </a>
+                            </div>
+                        </div>
+
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- Recommended for you -->
+<section class="p-5" id="carousel2">
+    <h2 class="text-center p-5"> <strong> Recommended for you </strong></h2>
+    <br>
+    <div class="container mt-5">
+        @{
+            // Select six random products and arrange them in ascending order of price.
+            var random6 = Model.OrderBy(x => Guid.NewGuid()).Take(12).OrderBy(p => p.SalePrice).ToList();
+        }
+        <div class="row g-5">
+            @foreach (var item in random6)
+            {<div class="col-md-3 mb-md-5">
+                    <a href="/Home/Detail?id=@item.ID" class="products recommendA" style="position:relative">
+                        <h2 class="text-danger"><i class="bi bi-fire" style="position:absolute; left:3px;">TOP</i></h2>
+                        <img src="@item.Img" alt="@item.Name" style="width:300px; height:300px;" />
+                        <p class="prText">@item.Name</p>
+                        <p> <h2 class="text-warning text-center">NOW: $@item.SalePrice</h2> </p>
+                        <p class="prPrice"><del>$@item.Price</del> </p>
+                    </a>
+                </div>
+            }
+
+        </div>
+
+    </div>
+    <div class="text-end">
+        <a href="/Home/List" class="btn btn-lg btn-warning " style="display:inline-block; margin-right:300px;">See More</a>
+    </div>
+</section>
+
+
+
+
+
+
+
+@* membership sign up *@
+<section class="p-5 text-light" style="background-color: #78c2ad;" id="carousel3">
+    <div class="container">
+        <div class="row">
+            <div class="col-md">
+                <h1 class="my-2">Join us<strong style="color: #eb1769;"> today!</strong></h1>
+                <h2 class="my-3">Why create an account?</h2>
+                <ul class="list-unstyled" style="font-size: 20px;">
+                    <li><i class="bi bi-person-fill" style="color: white; "></i> Membership discount</li>
+                    <li><i class="bi bi-lightning-charge" style="color: white;"></i> Get to know the latest arrivals</li>
+                    <li><i class="bi bi-gift" style="color: white;"></i> Get a gift on your first order</li>
+                </ul>
+                <a href="/Home/Signup" class="btn btn-lg my-4" style="background-color: white;" id="homeSignupBtn">
+                    Sign up
+                </a>
+            </div>
+            <div class="col-md">
+                <img src="~/Content/Resources/otherImgs/membership.jpeg" class="w-100" alt="membershipPic" />
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+
+
+
+
+<!--Welcome to Han's Shopping Centre -->
+<section class="p-5">
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <img src="~/Content/Resources/otherImgs/shoppingmall.jpeg" class="w-100" />
+            </div>
+            <!-- right side -->
+            <div class=" col">
+                <h2>Welcome to Han's Shopping Centre </h2>
+                <p>
+                    At Han's Shopping Centre, we offer a world of endless possibilities for shoppers of all tastes and
+                    preferences. Discover
+                    a delightful shopping experience like no other, where style meets affordability and quality.
+                </p>
+
+                <h3>Shop with Confidence</h3>
+                <p>
+                    At Han's Shopping Centre, we believe that shopping should be a pleasure, not a chore. We invite you to
+                    explore our
+                    online store or visit us in person to discover a world of possibilities. Shop with confidence, and let us be
+                    your
+                    trusted shopping destination.
+
+
+                    Join the Han's Shopping Centre community today, and redefine your shopping experience.
+                </p>
+                <a href="/Home/Findmore" class="btn btn-lg my-4" type="button" style="background-color: #78c2ad;color: white; ">Find More</a>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+
+
+
+
+
+
+<!-- Help & FAQs -->
+<section class="p-5 text-light" style="background-color: #78c2ad;">
+    <div class="container " style="background-color: #78c2ad;">
+        <h2 class="text-center"> Help & FAQs</h2>
+        <!-- accordion component -->
+        <div class="accordion accordion-flush" id="accordionFlushExample" style="background-color: #78c2ad;">
+            <div class="accordion-item" style="background-color: #78c2ad;">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed text-light" style="background-color: #78c2ad;" type="button"
+                            data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false"
+                            aria-controls="flush-collapseOne">
+                        <i class="bi bi-patch-question" style="color:white;"></i>&nbsp; Delivery
+                    </button>
+                </h2>
+                <!-- class:show will display the content of the first accordion-->
+                <div id="flush-collapseOne" class="accordion-collapse collapse show" data-bs-parent="#accordionFlushExample">
+                    <div class="accordion-body text-light">
+                        <h5 style="color: #e31361;">What are your delivery timeframes?</h5>
+                        We will keep you up to date with the progress of your order via email. Please
+                        allow up to 3 business days for processing as we prepare your order for delivery. We will send you a
+                        tracking
+                        link once your order is processed. Thank you for your understanding.
+
+
+                        <h5 style="color: #e31361;">Who will deliver my order?</h5>
+                        Our sole carrier is Han Post.
+
+
+                        The tracking link in your shipping confirmation email(s) will take you directly to the carrier’s website
+                        to track your
+                        package.
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item " style="background-color: #78c2ad;">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed text-light" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo"
+                            style="background-color: #78c2ad;">
+                        <i class="bi bi-patch-question" style="color: white;"></i>&nbsp;Exchanges Returns
+                    </button>
+                </h2>
+                <div id="flush-collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+                    <div class="accordion-body text-light">
+                        <h5 style="color: #e31361;">I just got my order and something is damaged/faulty/wrong. What do I do?</h5>
+                        Please take any damaged, faulty or wrong products to your local Kmart store, along with a copy of your tax
+                        invoice, for
+                        a refund.
+
+
+                        You can use your order confirmation email as a tax invoice, or access a copy in My Account
+                        If you’re unable to visit a store, please use our Contact us form to submit an application for a refund.
+
+
+                        Please upload a clear image of the damaged/faulty/wrong item(s) and make sure you tell us your order
+                        number and the item
+                        code(s).
+
+
+                        Our Customer Service team will review your refund application
+                        <h5 style="color: #e31361;">I received part of my order. When am I getting the rest?</h5>
+                        our order may arrive in multiple packages from multiple carriers. Detailed tracking information will be
+                        emailed to you
+                        when your order is dispatched.
+
+
+                        Please allow up to 4 business days from placing your order, for the shipping details to be confirmed by
+                        email.
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item" style="background-color: #78c2ad;">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed text-light" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#flush-collapseThree" aria-expanded="false" aria-controls="flush-collapseThree"
+                            style="background-color: #78c2ad;">
+                        <i class="bi bi-patch-question" style="color: white;"></i>&nbsp; Order Changes
+                    </button>
+                </h2>
+                <div id="flush-collapseThree" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+                    <div class="accordion-body text-light">
+                        <h5 style="color: #e31361;">An item in my order has been cancelled. Why?</h5>
+                        <p>Unfortunately, this will happen if we haven’t been able to secure all items in your order.</p>
+                        <p>
+                            You’ll be contacted by email as soon as possible and we’ll refund you,using your original payment
+                            method. Please allow 3
+                            – 5 business days for your refund to process.
+                        </p>
+                        <p>
+                            For items purchased online with buy now, pay later service providers, a refund will be processed and
+                            your buy now, pay
+                            later service provider will be advised. Your payment plan will be adjusted to reflect the new total
+                            order value
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</section>
+
+
+
+
+
+
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+<script src="~/Scripts/myScript/myScripts.js"></script>
+
+
+
+
+
+
+

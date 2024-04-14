@@ -1,0 +1,256 @@
+﻿@* FOR ALL VISITORS WHO VIEW THIS WEBSITE *@
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Han's Shopping Centre</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="~/Content/myStyle.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+</head>
+
+<body>
+
+
+
+    @* NAVBAR *@
+    <!-- fixed-top, the user can see the navbar all the time -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top" style="background-color: #78c2ad; height:88px;">
+        <!-- .navbar-brand for my company, product, or project name. -->
+        <a href="/Home/Index" class="navbar-brand" style="display:inline-block; margin-left:40px;"><h2 style="font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif"><i class="bi bi-shop-window"></i>Han'sShoppingCentre</h2> </a>
+
+        <div class="container">
+            @if (Session["userNickname"] != null)
+            {
+                <h4 style="margin:10px; margin-right:50px;">Welcom dear <strong class="text-warning ">@(Session["userNickname"])</strong></h4>
+            }
+
+
+            <!-- search bar to find a certain product -->
+            <form class="d-flex " role="search" method="get" action="/Home/List" id="HomeSearchBar">
+                <input class="form-control " type="search" placeholder="I'm looking for..." aria-label="Search" name="keyword"
+                       value="@(Request.QueryString["keyword"] != null? Request.QueryString["keyword"]:"")" id="searchKeyword" style="width:300px;">
+                <button class="btn " type="submit" style="color: white; border: 2px solid white;" id="HomeSearchBarBtn">Search</button>
+            </form>
+
+
+
+
+
+
+
+
+
+            @*  tosate - if the user typed nothing and clicks the search button, then the tosate will show up to remind the user to type in a saerching keyword *@
+            <div class="toast " style="margin-top:50px;" aria-live="polite" id="myToast" role="alert" aria-atomic="true" data-bs-autohide="false">
+                <div class="toast-header">
+
+                    <span class="bg-warning rounded me-2" style="width: 15px; height: 15px;"></span>
+                    <strong class="me-auto">Notification</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+                <div class="toast-body">
+                    <b>Dear customer, please enter a keyword to search goodies  !</b>
+                </div>
+            </div>
+
+
+
+
+
+
+
+
+            <!-- navbar-toggler-icon will be displayed on the top right if the screen gets too small -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navmenu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <!-- navbar-collapse for grouping and hiding navbar contents by a parent breakpoint. -->
+            <div class="collapse navbar-collapse" id="navmenu">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item" style="margin-right:30px;">
+                        @* if user login successfully, then display user nickname, otherwise the default SIGN IN sign  *@
+                        @if (Session["userNickname"] != null)
+                        {
+                            <a href="/Home/UserCentre" class="nav-link" style="color: white;"><i class="bi bi-person-arms-up" style="color: white;"></i> @Session["userNickname"]'s CENTRE</a>
+
+                        }
+                        else
+                        {
+                            <a href="/Home/Login" class="nav-link" style="color: white;">
+                                <i class="bi bi-person-fill"
+                                   style="color: white;"></i> USER SIGN
+                                IN
+                            </a>
+                        }
+
+                    </li>
+                    @* if staff log in successfully, then display Staff Centre,otherwise display staff log in*@
+                    @if (Session["currentAdminName"] != null)
+                    {
+                        <li class="nav-item" style="margin-right:30px;">
+                            <a href="/Admin/Index" class="nav-link" style="color: white;">
+                                <i class="bi bi-file-earmark-person"
+                                   style="color: white;"></i> STAFF CENTRE
+                            </a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item" style="margin-right:30px;">
+                            <a href="/Login/Index" class="nav-link" style="color: white;">
+                                <i class="bi bi-file-earmark-person"
+                                   style="color: white;"></i> STAFF LOG IN
+                            </a>
+                        </li>
+                    }
+                    <li class="nav-item" style="margin-right:30px;">
+                        <a href="/Home/Cart" class="nav-link" style="color: white;" id="navCart">
+                            <i class="bi bi-cart2"
+                               style="color: white;"></i> CART
+                            @if (Session["userNickname"] != null)
+                            {
+                                <span style="display:inline-block; padding-left:5px; border-radius:5px 5px 5px 0; background-color:beige; height:25px; color:darkorange ; position:absolute; bottom:50px;"> <b>@Session["productNum"]</b> </span>
+                            }
+                        </a>
+                    </li>
+                    <li style="margin-right:30px;">
+                        @* if user sign in, then the log off sign will be displayed *@
+                        @if (Session["userNickname"] != null)
+                        {
+                            <a href="/Home/Logout" class="nav-link" style="color: white;"><i class="bi bi-door-open-fill" style="color: white;"></i> USER SIGN OFF</a>
+                        }
+
+                    </li>
+
+                </ul>
+            </div>
+
+        </div>
+    </nav>
+
+
+
+
+
+
+
+
+    @* use renderbody()to load other pages *@
+    @RenderBody()
+
+
+    <hr />
+    <!-- CONTACT US part -->
+    <section class="p-5 ">
+        <div class="container">
+            <h2 class="text-center mb-4">Contact Us</h2>
+            <ul class="list-group list-group-flush ">
+                <li class="list-group-item ">Phone: 34324234</li>
+                <li class="list-group-item ">Email: <a href="mailto:HanShopping@pp.com" style="text-decoration:none; color:black;">HanShopping@pp.com</a></li>
+                <li class="list-group-item">
+                    Address: 24 Han Street, Hansonville,
+                    Hankland,
+                    Han Zealand
+                </li>
+            </ul>
+        </div>
+    </section>
+
+
+
+
+    <!-- FOOTER part -->
+    <footer class="p-5 text-center text-light" style="background-color: #78c2ad;">
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <span>For more about website knowledge, please check the links listed on the right:</span>
+                </div>
+                <div class="col">
+                    <span>
+                        <a href="https://validator.w3.org/docs/users.html#Calling" class="text-light">W3C Validator API</a>
+                    </span>
+                </div>
+                <div class="col">
+                    <span>
+                        <a href="https://jigsaw.w3.org/css-validator/manual.html" class="text-light">CSS Validator</a>
+                    </span>
+                </div>
+                <div class="row">
+                    <div class="col g-5">
+                        <p class="lead">Copyright &copy;2023 Han'sShoppingCentre</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+
+
+
+</html>
+
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/bootstrap")
+@RenderSection("scripts", required: false)
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+<script src="~/Scripts/myScript/myScripts.js"></script>
+
+
+
+
+@* ajax to remind the user to type in searching keyword before clicking the searching button *@
+<script>
+
+    // will add a toast as a reminer
+    var myToast = document.getElementById('myToast');
+
+    $(document).ready(function () {
+        // get the current page URL
+        var currentUrl = window.location.pathname;
+
+        $("#HomeSearchBarBtn").on("click", function (e) {
+            e.preventDefault(); //prevent the submition
+
+            // get the value of search bar's content
+            var keyword = $("#searchKeyword").val();
+
+            // check if the current page is the home page
+            if (currentUrl === "/Home/Index" || currentUrl === "/") {
+                // check if the keyword is null or not
+                if (!keyword.trim()) {
+                    // if there is no keyword in the search bar, and the user clicks the search button, then will display a toast
+                    var toast = new bootstrap.Toast(myToast);
+                    toast.show();
+                } else {
+                    // if keyword exists, submit the form
+                    $("#HomeSearchBar").submit();
+                }
+            } else {
+                // if it is not the homepage, then submit the form as well
+                $("#HomeSearchBar").submit();
+            }
+        });
+    });
+</script>
+
+
+
+
+
+
+
+
+

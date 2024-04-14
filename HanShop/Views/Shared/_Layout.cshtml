@@ -1,0 +1,227 @@
+﻿@* FOR ADMIN/STAFF LOGIN IN *@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Centre</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="~/Content/myStyle.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+</head>
+
+
+<body>
+    <section class="mt-5">
+
+
+        @* navbar and person profile on right *@
+        <div class="container">
+            <nav class=" navbar navbar-expand-lg bg-primary navbar-dark fixed-top">
+                <a href="/Home/Index" class="navbar-brand" style="display:inline-block; margin-left:40px;"><h2 style="font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif"><i class="bi bi-shop-window"></i>Han'sShoppingCentre</h2> </a>
+                <!-- person icon is at the right side of the navbar -->
+                <ul class="navbar-nav ms-auto" style="margin-right: 120px;">
+                    <li class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle " data-bs-toggle="dropdown" hreflang="#" role="button"
+                           aria-haspopup="true" aria-expanded="false">
+                            <i class="bi bi-person-circle "
+                               style="font-size: 30px; color: white;"></i>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li class="disabled text-center">
+                                @* diaplay the current admin name, should be admin *@
+                                <a style="cursor:default;">
+                                    <strong>
+                                        @(Session["currentAdminName"] != null ?
+        Session["currentAdminName"].ToString() : "")
+                                    </strong>
+                                </a>
+                            </li>
+                            <li class="dropdown-divider"> </li>
+                            <li>
+                                <a class="dropdown-item text-center" href="/Login/Logout">Sign Out</a>
+                            </li>
+                        </ul>
+                        @*<hr class="dropdown-divider">
+                            <a class="dropdown-item text-center" href="#">Profile</a>
+                            <a class="dropdown-item text-center" href="#">Seetings</a>*@
+                        @*<a class="dropdown-item text-center" href="#">Sign Out</a>*@
+
+                    </li>
+                </ul>
+            </nav>
+        </div>
+
+
+
+
+
+        <!-- left page navbar -->
+        <div class="container" style="margin-left: 0;">
+            <div class="row">
+                <div class="col-3">
+                    <ul class="nav flex-column">
+                        <!-- user management -->
+                        <li class="nav-item mb-3">
+                            <a class="nav-link" href="/User/Index" style="color:black">
+                                <i class="bi bi-speedometer2"></i> &nbsp; User
+                                Management
+                            </a>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <!-- reviews management -->
+                        <li class="nav-item mb-3">
+                            <a class="nav-link" href="/Review/Index" style="color:black">
+                                <i class="bi bi-envelope-open-heart"></i> &nbsp; Reviews
+                                Management
+                            </a>
+                        </li>
+                        <!-- Categories Management -->
+                        <li class="nav-item dropdown mb-3">
+                            <a class="nav-link dropdown-toggle" style="color:black" data-bs-toggle="dropdown" href="#" role="button"
+                               aria-haspopup="true" aria-expanded="false">
+                                <i class="bi bi-building-add"></i> &nbsp; Categories
+                                Management
+                            </a>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" href="/Category/Create">Add Categories</a>
+                                <hr class="dropdown-divider">
+                                <a class="dropdown-item" href="/Category/Index">Manage Categories</a>
+                            </div>
+                        </li>
+                        <!-- Products Management -->
+                        <li class="nav-item dropdown mb-3">
+                            <a class="nav-link dropdown-toggle" style="color:black" data-bs-toggle="dropdown" href="#" role="button"
+                               aria-haspopup="true" aria-expanded="false">
+                                <i class="bi bi-database-add"></i> &nbsp; Products
+                                Management
+                            </a>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" href="/Product/Create">Add Products</a>
+                                <hr class="dropdown-divider">
+                                <a class="dropdown-item" href="/Product/Index">Manage Products</a>
+                            </div>
+                        </li>
+
+                        @{ if ((Session["currentAdminName"] == "admin") && (Session["currentAdminId"] == "1"))
+                            {
+
+                                <!-- Staff management -->
+                                <li class="nav-item mb-3">
+                                    <a class="nav-link" href="/AdminsManagement/Index" style="color:black">
+                                        <i class="bi bi-person-gear"></i> &nbsp; Staff Management
+                                    </a>
+                                </li>
+
+                            } }
+
+
+
+                        <!-- Orders Management -->
+                        <li class="nav-item mb-3">
+                            <a class="nav-link" href="/Order/Index" style="color:black">
+                                <i class="bi bi-newspaper"></i> &nbsp; Orders
+                                Management
+                            </a>
+                        </li>
+
+
+                    </ul>
+                </div>
+
+
+                <!-- right screen -->
+                <div class="col-9 bg-light ">
+                    @RenderBody()
+                </div>
+            </div>
+        </div>
+        <hr />
+        <footer class="p-5 text-center text-light" style="background-color: #78c2ad;">
+            <div class="container">
+                <div class="row">
+                    <div class="col">
+                        <span>For more about website knowledge, please check the links listed on the right:</span>
+                    </div>
+                    <div class="col">
+                        <span>
+                            <a href="https://validator.w3.org/docs/users.html#Calling" class="text-light">W3C Validator API</a>
+                        </span>
+                    </div>
+
+
+                    <div class="col">
+                        <span>
+                            <a href="https://jigsaw.w3.org/css-validator/manual.html" class="text-light">CSS Validator</a>
+                        </span>
+                    </div>
+
+
+                    <div class="row">
+                        <div class="col g-5">
+                            <p class="lead">Copyright &copy;2023 Han'sShoppingCentre</p>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </footer>
+
+
+        @Scripts.Render("~/bundles/jquery")
+        @Scripts.Render("~/bundles/bootstrap")
+        @RenderSection("scripts", required: false)
+
+
+    </section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <script src="~/Scripts/myScript/myScripts.js"></script>
+</body>
+
+
+</html>
+
+
+
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/bootstrap")
+@RenderSection("scripts", required: false)
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+<script src="~/Scripts/myScript/myScripts.js"></script>

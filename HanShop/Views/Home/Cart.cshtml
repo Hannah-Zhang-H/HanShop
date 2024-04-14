@@ -1,0 +1,129 @@
+﻿@* if user logs in -> add products into the cart -> clicks the cart -> then this page will show up  *@
+@* this page displays the information of the products the user added into the cart *@
+
+@model IEnumerable<HanShop.Models.Cart>
+@{
+    ViewBag.Title = "Cart";
+    Layout = "~/Views/Shared/_HomeLayout.cshtml";
+}
+
+@* breadcrumb *@
+<nav aria-label="breadcrumb" class="p-5">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/Home/Index">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page">My Cart</li>
+    </ol>
+</nav>
+
+
+<h1 class="text-center">My Cart</h1>
+
+<div class="container p-5">
+    <div class="row">
+        <div class="col">
+            <div>
+                <table class="table table-hover text-center">
+                    <tr style="font-size:larger; font-weight:600;">
+                        <td>Product</td>
+                        <td>Product Name</td>
+                        <td>Price</td>
+                        <td>Purchase Number</td>
+                        <td>Total</td>
+                        <td>Action</td>
+                    </tr>
+
+                    @{
+
+                        decimal sumPrice = 0;
+
+                    }
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            @* add this link here, so user can just click the picture to jump to the certain product detail *@
+                            <td><a href="/Home/Detail?id=@item.ProductId"><img src="@item.Product.Img" alt="@item.Product.Name" class="w-50" /></a> </td>
+                            <td>@item.Product.Name</td>
+                            <td>$@item.Product.SalePrice</td>
+                            <td>@item.ProductNum</td>
+                            <td>$@(item.Product.SalePrice * item.ProductNum)</td>
+                            <td>
+                                <a class="text-danger" href="javascript:void(0)" onclick="del(@item.ProductId)">Delete</a>
+                                <input type="hidden" value="@item.ProductId" />
+                                <input type="hidden" value="@item.ProductNum" />
+                            </td>
+                        </tr>
+
+
+                        { sumPrice += Convert.ToDecimal(item.Product.SalePrice * item.ProductNum); }
+                    }
+                    <tr>
+                        <td colspan="4"></td>
+                        <td>Total to Pay: <strong>$@sumPrice</strong></td>
+                        <td></td>
+                    </tr>
+
+                </table>
+                <div class="text-center">
+
+                    <button class="btn btn-warning btn-lg" id="goToPay" onclick="goToPay()">Go to pay</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // delete a certain product
+    function del(productId) {
+        // check if user has logged in or not
+        var isLogin = @(Session["uerId"] != null? Session["uerId"] : 0);
+        if (isLogin == 0) {
+            alert("Please log in first");
+            return;
+        }
+
+        // get the conformation from the user whether to delete this product, if user choose yes, then will act on the following ajax code,
+        // otherwise, will cancel delete the product
+        if (!confirm("Are you sure to delete this product?")) { return false; }
+
+        // if user has logged in
+        $.ajax({
+            url: "/Home/CartDelProduct",
+            type: "post",
+            data: {
+                productId:productId
+
+            },
+
+            success: function (res) {
+                if (res == 200) {
+                    alert("Successfully deleted this product");
+                    window.location.reload();
+                }
+                else {
+                    alert("delete product failed.")
+                }
+            },
+
+            error: function (res) {
+                alert("Requesting failed, delete product failed. ")
+            }
+
+        })
+    }
+
+
+
+    // goToPay
+    function goToPay() {
+        // check if there is any products in the shopping cart
+        if ($(".table tr").length <= 2) {
+            alert("Please add a product before paying.");
+            return false;
+        }
+        // otherwise
+        window.location.href = "/Home/Pay";
+
+    }
+</script>

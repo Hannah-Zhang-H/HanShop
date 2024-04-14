@@ -1,0 +1,23 @@
+﻿@* if user logs in, then this page displays the welcome words to the user *@
+@{
+    ViewBag.Title = "UserCentre";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+
+
+<div class="alert alert-dismissible alert-warning p-5">
+    <button type="button" class="btn-close" data-bs-dismiss="alert" fdprocessedid="20a90v"></button>
+    <h4 class="alert-heading">Reminder!</h4>
+    <p class="mb-0">To <strong>modify</strong> your <strong>personal information</strong> or <strong>sign out</strong>, please click the icon on the right side of the navbar. </p>
+</div>
+
+
+<h2 class="p-5">Welcome to your personal centre, dear <strong> @(Session["userNickname"] != null? Session["userNickname"].ToString():"").</strong></h2> <br /> 
+                                                              
+<p class="p-2">Log in time: @DateTime.Now.</p>
+
+
+
+
+<div style="height:600px"></div>
